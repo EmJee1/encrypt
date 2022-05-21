@@ -1,6 +1,6 @@
 import { Command } from 'commander'
-import colorizeJson from 'json-colorizer'
 import { encryptAes } from './aes-encryption'
+import { logJson } from './terminal'
 
 const program = new Command()
 
@@ -25,7 +25,7 @@ program
   .argument('<string>', 'string to be encrypted')
   .action(stringToEncrypt => {
     const encrypted = encryptAes(stringToEncrypt)
-    console.log(colorizeJson(JSON.stringify(encrypted), { pretty: true }))
+    logJson(encrypted)
   })
 
 program.parse()

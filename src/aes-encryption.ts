@@ -2,7 +2,9 @@ import crypto from 'node:crypto'
 
 const AES_ALGORITHM = 'aes-256-cbc'
 
-export interface AesEncryptedPayload {
+// use type instead of interface, so it is assignable to an index signature of 'string'
+// https://github.com/microsoft/TypeScript/issues/15300#issuecomment-332366024
+export type AesEncryptedPayload = {
   /**
    * Encrypted string in hex encoding
    */
