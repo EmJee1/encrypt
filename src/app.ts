@@ -1,3 +1,5 @@
+import path from 'node:path'
+import fs from 'node:fs/promises'
 import { Command } from 'commander'
 import { encryptAes } from './aes-encryption'
 import { logJson } from './terminal'
@@ -13,10 +15,11 @@ program
   .command('encrypt-file')
   .description('Encrypt a file')
   .argument('<filepath>', 'path to the file to be encrypted')
-  .argument('[encrypted-filename]', 'name of the encrypted file')
-  .action((filepath: string, encryptedFilename?: string) => {
-    console.log('Filepath:', filepath)
-    console.log('Encrypted filename:', encryptedFilename)
+  .action(async (filepath: string, encryptedFilename?: string) => {
+    const resolvedPath = path.resolve(filepath)
+    const fileContents = await fs.readFile(resolvedPath, 'utf-8')
+    const encrypted = encryptAes(fileContents)
+    logJson(encrypted)
   })
 
 program
