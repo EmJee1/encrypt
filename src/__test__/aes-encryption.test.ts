@@ -5,6 +5,7 @@ describe('aes', () => {
     it('should return a truthy iv and encrypted message', () => {
       const encrypted = encryptAes('input')
       expect(encrypted.encrypted).toBeTruthy()
+      expect(encrypted.key).toBeTruthy()
       expect(encrypted.iv).toBeTruthy()
     })
 
