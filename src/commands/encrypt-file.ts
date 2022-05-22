@@ -2,7 +2,7 @@ import path from 'node:path'
 import fs from 'node:fs/promises'
 import { Command, program } from 'commander'
 import { encryptAes } from '../aes-encryption'
-import { logJson } from '../terminal'
+import { extractErrorMessage, logJson } from '../terminal'
 import { readFileSafe } from '../filesystem'
 
 const handleEncryptFile = async (
@@ -30,8 +30,8 @@ const encryptFile = new Command('encrypt-file')
     try {
       await handleEncryptFile(filepath, encryptedFilename)
     } catch (err) {
-      // TODO: implement error logger handler
-      return program.error('')
+      const errorMessage = extractErrorMessage(err)
+      return program.error(errorMessage)
     }
   })
 

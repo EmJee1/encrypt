@@ -5,3 +5,15 @@ export const logJson = (json: Record<string, unknown>) => {
   const colorizedJson = colorizeJson(jsonString, { pretty: true })
   console.log(colorizedJson)
 }
+
+export const extractErrorMessage = (error: unknown) => {
+  if (error instanceof Error) {
+    return error.message
+  }
+
+  if (typeof error === 'string') {
+    return error
+  }
+
+  return 'Unknown error occurred'
+}
