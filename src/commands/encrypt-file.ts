@@ -3,7 +3,7 @@ import fs from 'node:fs/promises'
 import { Command, program } from 'commander'
 import { encryptAes } from '../aes-encryption'
 import { extractErrorMessage, logJson } from '../terminal'
-import { readFileSafe } from '../filesystem'
+import { readFileSafe, writeFileSafe } from '../filesystem'
 
 const handleEncryptFile = async (
   filepath: string,
@@ -13,8 +13,7 @@ const handleEncryptFile = async (
   const encryptedPayload = encryptAes(fileContents)
 
   if (encryptedFilename) {
-    const resolvedPathToWrite = path.resolve(encryptedFilename)
-    await fs.writeFile(resolvedPathToWrite, encryptedPayload.encrypted, 'utf-8')
+    await writeFileSafe(encryptedFilename, encryptedPayload.encrypted)
     logJson({ iv: encryptedPayload.iv, key: encryptedPayload.key })
     return
   }
