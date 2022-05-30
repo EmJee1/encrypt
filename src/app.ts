@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { program } from 'commander'
 import encryptFile from './commands/encrypt-file'
 import encryptString from './commands/encrypt-string'
