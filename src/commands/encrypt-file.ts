@@ -1,5 +1,3 @@
-import path from 'node:path'
-import fs from 'node:fs/promises'
 import { Command, program } from 'commander'
 import { encryptAes } from '../aes-encryption'
 import { extractErrorMessage, logJson } from '../terminal'
