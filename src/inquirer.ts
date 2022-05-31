@@ -1,4 +1,32 @@
+import { Question } from 'inquirer'
 import { readFileSafe } from './filesystem'
+
+type QuestionGenerator = (message: string) => Question
+
+export const existingFileQuestion: QuestionGenerator = message => ({
+  type: 'input',
+  name: 'path',
+  message,
+  validate: validateFileExists,
+})
+
+export const keyQuestion: QuestionGenerator = message => ({
+  type: 'input',
+  name: 'key',
+  message,
+})
+
+export const ivQuestion: QuestionGenerator = message => ({
+  type: 'input',
+  name: 'iv',
+  message,
+})
+
+export const outputQuestion: QuestionGenerator = message => ({
+  type: 'input',
+  name: 'output',
+  message,
+})
 
 export const validateFileExists = async (
   input: string

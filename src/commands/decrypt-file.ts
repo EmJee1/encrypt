@@ -1,9 +1,14 @@
 import { Command, program } from 'commander'
-import { validateFileExists } from '../inquirer'
+import inquirer, { QuestionCollection } from 'inquirer'
 import { readFileSafe, writeFileSafe } from '../filesystem'
 import { extractErrorMessage, logJson } from '../terminal'
 import { decryptAes } from '../aes-encryption'
-import inquirer, { QuestionCollection } from 'inquirer'
+import {
+  existingFileQuestion,
+  ivQuestion,
+  keyQuestion,
+  outputQuestion,
+} from '../inquirer'
 
 interface DecryptFileOptions {
   path: string
@@ -13,27 +18,10 @@ interface DecryptFileOptions {
 }
 
 const questions: QuestionCollection = [
-  {
-    type: 'input',
-    name: 'path',
-    message: 'path to the file',
-    validate: validateFileExists,
-  },
-  {
-    type: 'input',
-    name: 'key',
-    message: 'private key',
-  },
-  {
-    type: 'input',
-    name: 'iv',
-    message: 'initialization vector',
-  },
-  {
-    type: 'input',
-    name: 'output',
-    message: 'path to the output file, leave empty to print to stdout',
-  },
+  existingFileQuestion('path to the file'),
+  keyQuestion('private key'),
+  ivQuestion('initialization vector'),
+  outputQuestion('path to the output file, leave empty to print to stdout'),
 ]
 
 const handleDecryptFile = async () => {
