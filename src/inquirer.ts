@@ -32,6 +32,13 @@ const questions: Record<QuestionKey, Question> = {
   },
 }
 
+/**
+ * @name requestMissingData
+ * @summary spawns interactive prompt to retrieve user input that was not given by the user yet
+ * @param {QuestionKey[]} data keys of the data that is already specified
+ * @returns {Record<QuestionKey, string>>} object with the requested data
+ * @throws {Error} TtyError if prompt could not be rendered in the environment
+ */
 export const requestMissingData = async (data: QuestionKey[]) => {
   const additionalQuestions = Object.entries(questions)
     .map(([questionKey, question]) => {
