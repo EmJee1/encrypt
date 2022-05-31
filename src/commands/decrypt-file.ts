@@ -1,19 +1,43 @@
 import { Command, program } from 'commander'
-import { QuestionKey, requestMissingData } from '../inquirer'
+import { validateFileExists } from '../inquirer'
 import { readFileSafe, writeFileSafe } from '../filesystem'
 import { extractErrorMessage, logJson } from '../terminal'
 import { decryptAes } from '../aes-encryption'
+import inquirer, { QuestionCollection } from 'inquirer'
 
-export interface DecryptFileOptions {
+interface DecryptFileOptions {
   path: string
   key: string
   iv: string
   output?: string
 }
 
-const handleDecryptFile = async (data: Partial<DecryptFileOptions>) => {
-  const missing = await requestMissingData(Object.keys(data) as QuestionKey[])
-  const options = { ...data, ...missing } as DecryptFileOptions
+const questions: QuestionCollection = [
+  {
+    type: 'input',
+    name: 'path',
+    message: 'path to the file',
+    validate: validateFileExists,
+  },
+  {
+    type: 'input',
+    name: 'key',
+    message: 'private key',
+  },
+  {
+    type: 'input',
+    name: 'iv',
+    message: 'initialization vector',
+  },
+  {
+    type: 'input',
+    name: 'output',
+    message: 'path to the output file, leave empty to print to stdout',
+  },
+]
+
+const handleDecryptFile = async () => {
+  const options = await inquirer.prompt<DecryptFileOptions>(questions)
 
   const encrypted = await readFileSafe(options.path)
   const decrypted = decryptAes(encrypted, options.key, options.iv)
@@ -28,13 +52,9 @@ const handleDecryptFile = async (data: Partial<DecryptFileOptions>) => {
 
 const decryptFile = new Command('decrypt-file')
   .description('Decrypt a file')
-  .option('-p, --path <path>', 'path to the file')
-  .option('-k --key <key>', 'decryption key')
-  .option('-i --iv <iv>', 'initialization vector')
-  .option('-o --output <path>', 'path to encrypted file')
-  .action(async (data: Partial<DecryptFileOptions>) => {
+  .action(async () => {
     try {
-      await handleDecryptFile(data)
+      await handleDecryptFile()
     } catch (err) {
       const errorMessage = extractErrorMessage(err)
       return program.error(errorMessage)
