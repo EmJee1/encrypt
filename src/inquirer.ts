@@ -30,6 +30,11 @@ const questions: Record<QuestionKey, Question> = {
     name: 'iv',
     message: 'initialization vector',
   },
+  output: {
+    type: 'input',
+    name: 'output',
+    message: 'path to the output file, leave empty to print to stdout',
+  },
 }
 
 /**
