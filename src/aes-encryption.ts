@@ -32,7 +32,7 @@ export const encryptAes = (input: string): AesEncryptedPayload => {
     throw new TypeError("Content to encrypt should be of type 'string'")
   }
 
-  const cipherKey = Buffer.from(crypto.randomBytes(32))
+  const cipherKey = crypto.randomBytes(32)
   const cipherIv = crypto.randomBytes(16)
 
   const cipher = crypto.createCipheriv(AES_ALGORITHM, cipherKey, cipherIv)
