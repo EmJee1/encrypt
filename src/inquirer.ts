@@ -14,6 +14,7 @@ export const keyQuestion: QuestionGenerator = message => ({
   type: 'input',
   name: 'key',
   message,
+  validate: validateKey,
 })
 
 export const ivQuestion: QuestionGenerator = message => ({
@@ -39,4 +40,14 @@ export const validateFileExists = async (
       ? err.message
       : 'Something went wrong when trying to access the file'
   }
+}
+
+export const validateKey = (input: string): boolean | string => {
+  const byteLength = Buffer.byteLength(input, 'utf-8')
+
+  if (byteLength !== 32) {
+    return `The key should have a byte length of 32, instead got ${byteLength}`
+  }
+
+  return true
 }
