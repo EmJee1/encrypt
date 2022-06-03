@@ -1,16 +1,26 @@
-import { AesEncryptedPayload, decryptAes, encryptAes } from '../aes-encryption'
+import {
+  AesEncryptedPayload,
+  decryptAes,
+  encryptAes,
+  generatePrivateKey,
+} from '../aes-encryption'
+
+const expectValidEncryptedObject = (encrypted: AesEncryptedPayload) => {
+  expect(encrypted.encrypted).toBeTruthy()
+  expect(encrypted.key).toBeTruthy()
+  expect(encrypted.iv).toBeTruthy()
+}
 
 describe('aes', () => {
   describe('encrypt', () => {
-    it('should return a truthy iv and encrypted message', () => {
-      const encrypted = encryptAes('input')
-      expect(encrypted.encrypted).toBeTruthy()
-      expect(encrypted.key).toBeTruthy()
-      expect(encrypted.iv).toBeTruthy()
+    it('should return a valid encrypted object with custom private key', () => {
+      const encrypted = encryptAes('input', generatePrivateKey())
+      expectValidEncryptedObject(encrypted)
     })
 
     it('input string should be different from the output', () => {
-      expect(encryptAes('input')).not.toEqual('input')
+      const { encrypted } = encryptAes('input', generatePrivateKey())
+      expect(encrypted).not.toEqual('input')
     })
 
     it('should throw error if no argument is passed', () => {
@@ -21,7 +31,7 @@ describe('aes', () => {
   describe('decrypt', () => {
     let encrypted: AesEncryptedPayload
     beforeAll(() => {
-      encrypted = encryptAes('input')
+      encrypted = encryptAes('input', generatePrivateKey())
     })
 
     it('should return a truthy message', () => {
@@ -46,6 +56,13 @@ describe('aes', () => {
       expect(() => decryptAes(undefined, undefined, encrypted.iv)).toThrow(
         TypeError
       )
+    })
+  })
+
+  describe('generate private key', () => {
+    it('should return a key in hex-string format', () => {
+      expect(generatePrivateKey()).toBeTruthy()
+      expect(generatePrivateKey().length).toBe(64)
     })
   })
 })

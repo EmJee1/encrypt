@@ -6,7 +6,7 @@ const encryptString = new Command('encrypt-string')
   .description('Encrypt a string')
   .argument('<string>', 'string to be encrypted')
   .action(stringToEncrypt => {
-    const encrypted = encryptAes(stringToEncrypt)
+    const encrypted = encryptAes(stringToEncrypt, '')
     logJson(encrypted)
   })
 

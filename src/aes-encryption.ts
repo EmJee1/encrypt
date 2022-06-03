@@ -1,4 +1,5 @@
 import crypto from 'node:crypto'
+import { convertHexToUtf8 } from './string-encoding'
 
 const AES_ALGORITHM = 'aes-256-cbc'
 
@@ -22,17 +23,22 @@ export type AesEncryptedPayload = {
 
 /**
  * @name encryptAes
- * @summary encrypts a string in AES format
+ * @summary encrypts a string with the AES algorithm
  * @param {string} input the string to be encrypted
+ * @param {string} keyString the key to use for encryption in hexadecimal format
  * @returns {AesEncryptedPayload} object containing the encrypted string, key and iv
  * @throws {TypeError} string type required
+ * @throws {TypeError} key should have a length of 32 bytes
  */
-export const encryptAes = (input: string): AesEncryptedPayload => {
+export const encryptAes = (
+  input: string,
+  keyString: string
+): AesEncryptedPayload => {
   if (typeof input !== 'string') {
     throw new TypeError("Content to encrypt should be of type 'string'")
   }
 
-  const cipherKey = crypto.randomBytes(32)
+  const cipherKey = Buffer.from(keyString, 'hex')
   const cipherIv = crypto.randomBytes(16)
 
   const cipher = crypto.createCipheriv(AES_ALGORITHM, cipherKey, cipherIv)
@@ -43,12 +49,11 @@ export const encryptAes = (input: string): AesEncryptedPayload => {
   ])
 
   const encryptedString = encryptedBuffer.toString('hex')
-  const keyString = cipherKey.toString('hex')
   const ivString = cipherIv.toString('hex')
 
   return {
     encrypted: encryptedString,
-    key: keyString,
+    key: convertHexToUtf8(keyString),
     iv: ivString,
   }
 }
@@ -88,4 +93,8 @@ export const decryptAes = (
   ])
 
   return decryptedBuffer.toString()
+}
+
+export const generatePrivateKey = (): string => {
+  return crypto.randomBytes(32).toString('hex')
 }

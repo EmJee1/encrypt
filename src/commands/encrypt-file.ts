@@ -2,33 +2,29 @@ import { Command, program } from 'commander'
 import inquirer, { QuestionCollection } from 'inquirer'
 import { extractErrorMessage, logJson } from '../terminal'
 import { readFileSafe, writeFileSafe } from '../filesystem'
+import { existingFileQuestion, keyQuestion, outputQuestion } from '../inquirer'
+import { convertUtf8ToHex } from '../string-encoding'
 import { encryptAes } from '../aes-encryption'
-import {
-  existingFileQuestion,
-  ivQuestion,
-  keyQuestion,
-  outputQuestion,
-} from '../inquirer'
 
 interface EncryptFileOptions {
   path: string
-  key?: string
-  iv?: string
+  key: string
   output?: string
 }
 
 const questions: QuestionCollection = [
   existingFileQuestion('path to the file'),
-  keyQuestion('private key, leave empty to generate'),
-  ivQuestion('initialization vector, leave empty to generate'),
+  keyQuestion('private key, leave empty to generate', false),
   outputQuestion('path to the output file, leave empty to print to stdout'),
 ]
 
 const handleEncryptFile = async () => {
   const options = await inquirer.prompt<EncryptFileOptions>(questions)
 
+  const key = convertUtf8ToHex(options.key)
+
   const fileContents = await readFileSafe(options.path)
-  const encryptedPayload = encryptAes(fileContents)
+  const encryptedPayload = encryptAes(fileContents, key)
 
   if (options.output) {
     await writeFileSafe(options.output, encryptedPayload.encrypted)
