@@ -3,8 +3,8 @@ import inquirer, { QuestionCollection } from 'inquirer'
 import { extractErrorMessage, logJson } from '../terminal'
 import { readFileSafe, writeFileSafe } from '../filesystem'
 import { existingFileQuestion, keyQuestion, outputQuestion } from '../inquirer'
+import { encryptAes, generatePrivateKey } from '../aes-encryption'
 import { convertUtf8ToHex } from '../string-encoding'
-import { encryptAes } from '../aes-encryption'
 
 interface EncryptFileOptions {
   path: string
@@ -21,7 +21,7 @@ const questions: QuestionCollection = [
 const handleEncryptFile = async () => {
   const options = await inquirer.prompt<EncryptFileOptions>(questions)
 
-  const key = convertUtf8ToHex(options.key)
+  const key = options.key ? convertUtf8ToHex(options.key) : generatePrivateKey()
 
   const fileContents = await readFileSafe(options.path)
   const encryptedPayload = encryptAes(fileContents, key)
