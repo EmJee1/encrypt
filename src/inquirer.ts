@@ -1,11 +1,15 @@
-import { Question } from 'inquirer'
-import { readFileSafe } from './filesystem'
+import { Question, registerPrompt } from 'inquirer'
+import fuzzyPath, { FuzzyPathQuestionOptions } from 'inquirer-fuzzy-path'
 
-export const existingFileQuestion = (message: string): Question => ({
-  type: 'input',
+registerPrompt('fuzzypath', fuzzyPath)
+
+export const existingFileQuestion = (
+  message: string
+): FuzzyPathQuestionOptions => ({
+  type: 'fuzzypath',
+  itemType: 'file',
   name: 'path',
   message,
-  validate: validateFileExists,
 })
 
 export const keyQuestion = (message: string, required: boolean): Question => ({
@@ -26,19 +30,6 @@ export const outputQuestion = (message: string): Question => ({
   name: 'output',
   message,
 })
-
-export const validateFileExists = async (
-  input: string
-): Promise<boolean | string> => {
-  try {
-    await readFileSafe(input)
-    return true
-  } catch (err) {
-    return err instanceof Error
-      ? err.message
-      : 'Something went wrong when trying to access the file'
-  }
-}
 
 export const validateKey =
   (required: boolean) =>
