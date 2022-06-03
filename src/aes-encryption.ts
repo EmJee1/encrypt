@@ -11,7 +11,7 @@ export type AesEncryptedPayload = {
    */
   encrypted: string
   /**
-   * Private key for decoding in hex encoding
+   * Private key for decoding in utf-8 encoding
    */
   key: string
   /**
